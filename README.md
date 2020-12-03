@@ -2,8 +2,8 @@
 Dynamic Routing Mechanism in Faulty Network nodes or Links
 
 # Libraries used
-'''Python
+```Python
 NetworkX
 MatPlotLib
 Random
-'''
+```
