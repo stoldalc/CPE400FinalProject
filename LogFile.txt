@@ -1,1 +1,21 @@
-
+		LOG FILE START
+Step: 1		-Edges-
+	('A', 'O', {'weight': 5})
+	('A', 'D', {'weight': 4})
+	('B', 'F', {'weight': 3})
+	('B', 'J', {'weight': 2})
+	('C', 'M', {'weight': 2})
+	('D', 'H', {'weight': 4})
+	('E', 'P', {'weight': 2})
+	('E', 'L', {'weight': 1})
+	('E', 'M', {'weight': 2})
+	('F', 'M', {'weight': 3})
+	('F', 'P', {'weight': 5})
+	('G', 'K', {'weight': 4})
+	('H', 'O', {'weight': 3})
+	('H', 'K', {'weight': 4})
+	('I', 'P', {'weight': 2})
+	('J', 'R', {'weight': 1})
+	('K', 'Q', {'weight': 5})
+	('L', 'N', {'weight': 1})
+	('M', 'R', {'weight': 5})
