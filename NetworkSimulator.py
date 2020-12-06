@@ -5,6 +5,8 @@ Created on Wed Dec  2 21:36:05 2020
 @author: Christian
 """
 import networkx as nx
+#import matplotlib
+#matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from random import randint
@@ -25,14 +27,14 @@ def initialNodeCreation(Paret,letterCount,nNodes):
     for i in range(len(letterCount)):
         
         buffer = randint(0,nNodes-1)
-        #print("nNodes: " + str(nNodes) + " buffer: " + str(buffer))
         
         if letterCount[buffer] != 1:
             letterCount[buffer] = 1
-            #print(letterCount)
+
+
             return buffer
-    #print(letterCount)
-    return randint(0,nNodes)
+
+    return randint(0,nNodes-1)
 
 #Appendes all current edges to a log file 
 def logEdgesAppend(fp,graph,step):
@@ -44,8 +46,13 @@ def logEdgesAppend(fp,graph,step):
 
 #Function to remove nodes
 def nodeFailure(g,n,step):
+    
+  global allFailedEdges
+  global allFailedNodes  
+  
   print("\t Removing node: " + n)
   buffer = g.edges(n)
+  allFailedNodes.append(n)
   
   logFile = open('LogFile.txt',"a+")
   logFile.write("Step: "  + str(step) + "\t\t-NODE REMOVAL-\n")
@@ -54,6 +61,7 @@ def nodeFailure(g,n,step):
 
   for tuple in list(buffer):
     g.remove_edge(tuple[0],tuple[1])
+    allFailedEdges.append(tuple)
   buffer = g.edges(n)
 
   return g
@@ -62,37 +70,66 @@ def nodeFailure(g,n,step):
 #Function to remove edges
 def linkFailure(g,n1,n2,num):
 
+
   print("\tRemoving the edge between: " + str(n1) + " and " + str(n2))
   logFile = open('LogFile.txt',"a+")
   logFile.write("Step: "  + str(num) + "\t\t-LINK REMOVAL-\n")
   logFile.write("\tEdge: " + str(n1) + "," + str(n2) + " removed\n")
   logFile.close()    
 
-  g.remove_edge(n1,n2) 
-  
+  g.remove_edge(n1,n2)
+  edgeTuple = (n1,n2)
+  allFailedEdges.append(edgeTuple)
   return g
 
 #Returns a tuple representing a random edge
 def randomEdge(g):
     edgesList = list(g.edges())
     
-    buffer = edgesList[randint(0,len(edgesList))]
-        
+    upperBound = len(edgesList)-1
+    if upperBound <= 0:
+        upperBound = 1
+    buffer = edgesList[randint(0,upperBound)]  
     return buffer
 
-def findPath(g):
+def findPath(g,num):
     nodesList = list(g.nodes())
     
-    n1 = nodesList[randint(0,len(nodesList))]
-    n2 = nodesList[randint(0,len(nodesList))]
     
-    print("Attempting to find a path between: " + n1 + ' and ' + n2)
     
-    return nx.dijkstra_path(g,n1,n2)
+    
+    
+    numOfEdges = len(list(g.edges()))
+    count = 0    
+    while True & (count < numOfEdges):
+        
+        n1 = nodesList[randint(0,len(nodesList)-1)]
+        n2 = nodesList[randint(0,len(nodesList)-1)]
+        
+        logFile = open('LogFile.txt',"a+")
+        logFile.write("Step: " + str(num) + " ATTEMPT PACKET TRANSFER OVER: " + str(n1) + "  " + str(n2) +"\n" )
+        logFile.close()
+        
+        print("Number of edges: " + str(numOfEdges) + " current count: " + str(count))
+        try:
+            print("Attempting to find a path between: " + n1 + ' and ' + n2)
+        
+            shortestPath = nx.dijkstra_path(g,n1,n2)
+            logFile = open('LogFile.txt',"a+")
+            logFile.write("\t" + str(list(shortestPath)) + "\n")
+            logFile.close()
+        
+            return nx.dijkstra_path(g,n1,n2)
+    
+        except:
+            count += 1
+            logFile = open('LogFile.txt',"a+")
+            logFile.write('\tNO PATH BETWEEN ' + str(n1) + ' TO ' + str(n2) + '\n') 
+            logFile.close()
+            
+    return '\tNO PATH BETWEEN ' + str(n1) + ' TO ' + str(n2) + '\n'
 
 def edgeListCreation(l):
-    #tuppleList = []
-    
     '''
     for i in range(len(l-1)):
         buffer = []
@@ -111,50 +148,64 @@ def networkUpdate(num):
     ax.clear()
     logFile = open('LogFile.txt',"a+")
     
+    #Global references
     global Network
+    global allFailedEdges
+    global allFailedNodes
     
-    #Randomly select if a node or a link will fail
-    if randint(0,1) == 1:
-        print(str(num) + ": Node has randomly failed ")
-        Network = nodeFailure(Network,nodeNames[randint(0,25)],num)
-    else:
-        print(str(num) + ": Link has randomly failed ")
+    #Randomly choosing if the network will have a failure
+    if randint(0,3) == 1:
+       #Randomly select if a node or a link will fail
+        if randint(0,1) == 1:
+            print(str(num) + ": Node has randomly failed ")
+            Network = nodeFailure(Network,initialNodes[randint(0,len(initialNodes)-1)],num)
+        else:
         
-        edgeBuffer = randomEdge(Network)
-        Network = linkFailure(Network,edgeBuffer[0],edgeBuffer[1],num)
+            if len(list(Network.edges.data())) > 1:
+                print(str(num) + ": Link has randomly failed ")
+        
+                edgeBuffer = randomEdge(Network)
+                Network = linkFailure(Network,edgeBuffer[0],edgeBuffer[1],num) 
+    
+    
     
     
     #Label the nodes
-    nx.draw_networkx_labels(Network, NodePos, font_size=20)
+    nx.draw_networkx_labels(Network, NodePos, font_size=13)
 
     #Visualize the nodes 
-    nx.draw_networkx_nodes(Network, NodePos, node_size=700, node_color='green')
-    
-    #select 2 nandom nodes to send a packet between
-    shortestPath = findPath(Network)
-    shortestPathEdges = edgeListCreation(shortestPath)
-    #print("Shortest path: " + str(edgeListCreation(shortestPath)))
-    
+    nx.draw_networkx_nodes(Network, NodePos, node_size=250, node_color='green')
+    nx.draw_networkx_nodes(Network, NodePos, allFailedNodes, node_size=250, node_color='red', label = 'Failed node')
 
     #Visualize the edges
+    labels = nx.get_edge_attributes(Network, 'weight')
+    nx.draw_networkx_edges(Network, NodePos, width=.5, edge_color = 'black', label = 'Active links')
     
-    nx.draw_networkx_edges(Network, NodePos, width=.5, edge_color = 'black')
-    nx.draw_networkx_edges(Network, NodePos, shortestPathEdges, width=2, edge_color = 'green')
+    #select 2 nandom nodes to send a packet between
+    shortestPath = findPath(Network,num)
+    if shortestPath[0] != '\t':
+        shortestPathEdges = edgeListCreation(shortestPath)
+        nx.draw_networkx_edges(Network, NodePos, shortestPathEdges, width=5, edge_color = 'green', label = 'Shortest path')
     
-    #nx.draw(Network, NodePos)
-
-    #fig, ax = plt.subplots(figsize=(10, 10))
+    nx.draw_networkx_edges(Network, NodePos, allFailedEdges, width=2, edge_color = 'red', label = 'Failed links', alpha=0.25)
+    
+    nx.draw_networkx_edge_labels(Network, NodePos, edge_labels=labels)
+    
+    ax.legend()
 
     #Logging current status of edges and nodes
     print(str(num) + ": loging edges")
     logEdgesAppend(logFile,Network,num)
     
+    title = 'Network Simulation                                                Step: ' + str(num)
+    
+    plt.title(title, loc='left')
     
     
+    plt.axis("off")
     
     logFile.close()
-    
-    #plt.axis("off")
+
     return Network
 
 
@@ -165,7 +216,6 @@ numberOfNodes = randint(15,26)
 
 #Create graph
 Network = nx.Graph()
-#plt.figure(figsize = (10,10))
 
 #Node names
 nodeNames = ['A','B','C','D','E','F','G','H','I'
@@ -173,8 +223,12 @@ nodeNames = ['A','B','C','D','E','F','G','H','I'
             ,'S','T','U','V','W','X','Y','Z']
 
 #Creating network nodes
+initialNodes = []
 for i in range(numberOfNodes):
   Network.add_node(nodeNames[i])
+  initialNodes.append(nodeNames[i])
+print("Network after nodes added")
+print(Network)  
 
 #Give each node a random position
 NodePos = nx.spring_layout(Network)
@@ -185,17 +239,24 @@ numberOfEdge = randint(20,25)
 #Label the nodes
 nx.draw_networkx_labels(Network, NodePos, font_size=20)
 
-
+#Declaring a tuple list of all failed edges
+allFailedEdges = []
+allFailedNodes = []
 
 #Create initial network edges
+#Making sure each node has an edge in the initial graph
 letterCount = [0]*numberOfNodes
 breakVal = 0
 while breakVal != 1:
     parent = randint(0,numberOfNodes-1)
-    Network.add_edge(nodeNames[parent] ,nodeNames[initialNodeCreation(parent,letterCount,numberOfNodes)] ,weight=randint(1,5))
+    Network.add_edge(initialNodes[parent] ,initialNodes[initialNodeCreation(parent,letterCount,numberOfNodes)] ,weight=randint(1,5))
     
     if 0 not in letterCount:
         breakVal = 1
+#Adding 10 more edges
+for i in range(50):
+    parent = randint(0,numberOfNodes-1)
+    Network.add_edge(initialNodes[parent] ,initialNodes[initialNodeCreation(parent,letterCount,numberOfNodes-1)] ,weight=randint(1,5))
 
 #Visualize the nodes 
 nx.draw_networkx_nodes(Network, NodePos, node_size=700, node_color='green')
@@ -203,16 +264,11 @@ nx.draw_networkx_nodes(Network, NodePos, node_size=700, node_color='green')
 #Visualize the edges
 nx.draw_networkx_edges(Network, NodePos, width=2)
 
-#Logging intial edges and nodes 
-#logFile = open('LogFile.txt',"a+")
-#logEdgesAppend(logFile,Network,1)
-#logFile.close()
-
 #Build the intial plt
 fig, ax = plt.subplots(figsize=(10, 10))
 
-plt.axis("off")
-#plt.savefig('Test.png')
+
+
 
 
 
@@ -221,7 +277,7 @@ plt.axis("off")
 '''
 
 animationLength = 9000
-#plt.figure(figsize = (10,10))
+
 '''
 animation = matplotlib.animation.FuncAnimation(fig,
                                                networkUpdate, 
@@ -230,8 +286,17 @@ animation = matplotlib.animation.FuncAnimation(fig,
                                                repeat = True)
 '''
 
-animation = animation.FuncAnimation(fig, networkUpdate, frames=20, interval=1000, repeat = False)
+
+
+#Writer = animation.writers['ffmpeg']
+#writer = Writer(fps=15, metadata=dict(artist='Christian Stoldal'), bitrate=1800)
+animation = animation.FuncAnimation(fig, networkUpdate, frames=35, interval=5000, repeat = False)
+#animation.save('NetworkSim.mp4', writer=writer)
+
 plt.show()
 
-#plt.savefig('Test1.gif')
+print('SIMULATION OVER')
+
+#plt.show()
+#.savefig('Test1.gif')
 
