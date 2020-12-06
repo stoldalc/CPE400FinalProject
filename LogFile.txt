@@ -1,21 +1,94 @@
 		LOG FILE START
-Step: 1		-Edges-
-	('A', 'O', {'weight': 5})
-	('A', 'D', {'weight': 4})
-	('B', 'F', {'weight': 3})
-	('B', 'J', {'weight': 2})
-	('C', 'M', {'weight': 2})
-	('D', 'H', {'weight': 4})
-	('E', 'P', {'weight': 2})
-	('E', 'L', {'weight': 1})
-	('E', 'M', {'weight': 2})
-	('F', 'M', {'weight': 3})
-	('F', 'P', {'weight': 5})
-	('G', 'K', {'weight': 4})
-	('H', 'O', {'weight': 3})
-	('H', 'K', {'weight': 4})
-	('I', 'P', {'weight': 2})
-	('J', 'R', {'weight': 1})
-	('K', 'Q', {'weight': 5})
-	('L', 'N', {'weight': 1})
-	('M', 'R', {'weight': 5})
+Step: 0		-LINK REMOVAL-
+	Edge: J,L removed
+Step: 0		-EDGES-
+	('A', 'A', {'weight': 4})
+	('B', 'I', {'weight': 4})
+	('B', 'C', {'weight': 2})
+	('C', 'E', {'weight': 1})
+	('D', 'O', {'weight': 5})
+	('D', 'M', {'weight': 1})
+	('E', 'F', {'weight': 1})
+	('F', 'J', {'weight': 5})
+	('F', 'N', {'weight': 3})
+	('G', 'L', {'weight': 5})
+	('G', 'N', {'weight': 1})
+	('H', 'J', {'weight': 2})
+	('I', 'K', {'weight': 2})
+	('L', 'M', {'weight': 2})
+	('O', 'P', {'weight': 1})
+Step: 0		-LINK REMOVAL-
+	Edge: I,K removed
+Step: 0		-EDGES-
+	('A', 'A', {'weight': 4})
+	('B', 'I', {'weight': 4})
+	('B', 'C', {'weight': 2})
+	('C', 'E', {'weight': 1})
+	('D', 'O', {'weight': 5})
+	('D', 'M', {'weight': 1})
+	('E', 'F', {'weight': 1})
+	('F', 'J', {'weight': 5})
+	('F', 'N', {'weight': 3})
+	('G', 'L', {'weight': 5})
+	('G', 'N', {'weight': 1})
+	('H', 'J', {'weight': 2})
+	('L', 'M', {'weight': 2})
+	('O', 'P', {'weight': 1})
+Step: 1		-LINK REMOVAL-
+	Edge: A,A removed
+Step: 1		-EDGES-
+	('B', 'I', {'weight': 4})
+	('B', 'C', {'weight': 2})
+	('C', 'E', {'weight': 1})
+	('D', 'O', {'weight': 5})
+	('D', 'M', {'weight': 1})
+	('E', 'F', {'weight': 1})
+	('F', 'J', {'weight': 5})
+	('F', 'N', {'weight': 3})
+	('G', 'L', {'weight': 5})
+	('G', 'N', {'weight': 1})
+	('H', 'J', {'weight': 2})
+	('L', 'M', {'weight': 2})
+	('O', 'P', {'weight': 1})
+Step: 2		-NODE REMOVAL-
+	Node: A removed
+Step: 2		-EDGES-
+	('B', 'I', {'weight': 4})
+	('B', 'C', {'weight': 2})
+	('C', 'E', {'weight': 1})
+	('D', 'O', {'weight': 5})
+	('D', 'M', {'weight': 1})
+	('E', 'F', {'weight': 1})
+	('F', 'J', {'weight': 5})
+	('F', 'N', {'weight': 3})
+	('G', 'L', {'weight': 5})
+	('G', 'N', {'weight': 1})
+	('H', 'J', {'weight': 2})
+	('L', 'M', {'weight': 2})
+	('O', 'P', {'weight': 1})
+Step: 3		-LINK REMOVAL-
+	Edge: G,L removed
+Step: 4		-NODE REMOVAL-
+	Node: J removed
+Step: 5		-LINK REMOVAL-
+	Edge: C,E removed
+Step: 6		-LINK REMOVAL-
+	Edge: G,N removed
+Step: 7		-LINK REMOVAL-
+	Edge: B,I removed
+Step: 8		-NODE REMOVAL-
+	Node: F removed
+Step: 9		-LINK REMOVAL-
+	Edge: L,M removed
+Step: 10		-LINK REMOVAL-
+	Edge: O,P removed
+Step: 11		-NODE REMOVAL-
+	Node: Y removed
+Step: 12		-LINK REMOVAL-
+	Edge: D,O removed
+Step: 13		-LINK REMOVAL-
+	Edge: B,C removed
+Step: 14		-LINK REMOVAL-
+	Edge: D,M removed
+Step: 19		-NODE REMOVAL-
+	Node: J removed
